@@ -1552,4 +1552,10 @@ public class RMNodeImpl implements RMNode, EventHandler<RMNodeEvent> {
   public Integer getDecommissioningTimeout() {
     return decommissioningTimeout;
   }
+
+  @Override
+  public Map<String, Long> getAllocationTagsWithCount() {
+    return context.getAllocationTagsManager()
+        .getAllocationTagsWithCount(getNodeID());
+  }
 }

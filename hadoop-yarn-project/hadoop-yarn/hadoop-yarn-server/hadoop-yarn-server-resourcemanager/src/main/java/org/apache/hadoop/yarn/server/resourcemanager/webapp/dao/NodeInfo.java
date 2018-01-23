@@ -20,6 +20,7 @@ package org.apache.hadoop.yarn.server.resourcemanager.webapp.dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -57,6 +58,7 @@ public class NodeInfo {
   private long usedVirtualCoresOpport;
   private int numQueuedContainers;
   protected ArrayList<String> nodeLabels = new ArrayList<String>();
+  private AllocationTagsInfo allocationTags;
   protected ResourceUtilizationInfo resourceUtilization;
 
   public NodeInfo() {
@@ -105,6 +107,14 @@ public class NodeInfo {
     if (labelSet != null) {
       nodeLabels.addAll(labelSet);
       Collections.sort(nodeLabels);
+    }
+
+    // add allocation tags
+    allocationTags = new AllocationTagsInfo();
+    Map<String, Long> allocationTagsInfo = ni.getAllocationTagsWithCount();
+    if (allocationTagsInfo != null) {
+      allocationTagsInfo.forEach((tag, count) ->
+          allocationTags.addAllocationTag(new AllocationTagInfo(tag, count)));
     }
 
     // update node and containers resource utilization
@@ -185,6 +195,11 @@ public class NodeInfo {
 
   public ResourceUtilizationInfo getResourceUtilization() {
     return this.resourceUtilization;
+  }
+
+  public String getAllocationTagsSummary() {
+    return this.allocationTags == null ? "" :
+        this.allocationTags.toString();
   }
 
   @VisibleForTesting
